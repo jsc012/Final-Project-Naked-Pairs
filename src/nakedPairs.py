@@ -11,23 +11,49 @@ from pythonds.graphs import Graph, Vertex
 
 def units(sudoku):
     """
-    Units
+    units
     ------
-    Takes a sudoku puzzle, and defines the rows, columns,
-    and boxes. Also creates IDs for each value in the puzzle 
-    based on the row, column, and box each value belongs to.
-    
+    Defines the rows, columns, and boxes of a sudoku board.
+    Also creates a tuple for each cell on the board,
+    based on the row, column, and box each cell belongs to.
+    Also brings in the actual sudoku puzzle, and makes a list
+    of that, making candidates for cells that equal 0.
+
     Parameters
     ___________
     sudoku : list[int]
-        A list of 81 values that this function will make IDs
-        for. If a value is 0, then we will assign candidate 
-        numbers to it. 
+        A list of 81 values. This is the list that the program
+        will edit to create candidate numbers for unsolved cells
+        (cells that have a value of 0).
+    
+    Returns
+    ________
+    rowList : list
+        A list of lists of the cells in each row.
+    columnList : list
+        A list of lists of the cells in each column.
+    boxList : list
+        A list of lists of the cells in each box.
+    candidatedSudoku : list
+        A list of values and candidate lists created from the
+        given sudoku puzzle.
+    cellUnitList : list
+        A list of tuples that corresponds to the 81 value sudoku
+        board. Each integer in the tuple corresponds to the cell's
+        units; the row, column, and box it belongs to.
+    
+    Notes
+    ------
+    To be clear: each unit list is not making a list from the values
+    of the given sudoku puzzle. It's making a list from the values of
+    a sudoku board. The actual sudoku values will be assigned to vertices
+    in the constraint graph.
     """
     rowList = []
     columnList = []
     boxList = []
-    cellList = []
+    candidatedSudoku = []
+    cellUnitList = []
     for r in range(9):
         start = r * 9
         rowList.append([start + i for i in range(9)])
@@ -46,103 +72,105 @@ def units(sudoku):
         r = cell // 9
         c = cell % 9
         b = (r//3)*3 + (c//3)
-        cellList.append((r, c, b))
-    print(rowList, "AAAAAAAAAAAAAAAAA\n\n", columnList, "AAAAAAAAAAAAAAAAA\n\n", boxList, "AAAAAAAAAAAAAAAAA\n\n", cellList)
-    print(cellList[9])
-    print(cellList[79])
+        cellUnitList.append((r, c, b))
+    for value in sudoku:
+        if value == 0:
+            value = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        candidatedSudoku.append(value)
+    # print("List of rows\n", rowList,
+    #       "\n\nList of columns\n", columnList,
+    #       "\n\nList of boxes\n", boxList,
+    #       "\n\nList of cell values\n", candidatedSudoku,
+    #       "\n\nList of each cells row, column, and box\n", cellUnitList)
+    return rowList, columnList, boxList, candidatedSudoku, cellUnitList
 def buildConstraintGraph(sudoku):
     """
-    This function takes the given sudoku puzzle and builds a constraint graph
-    that can enforce the rules of sudoku.
+    buildConstraintGraph
+    ---------------------
+    This function builds a graph of the sudoku board, adding information
+    to each cell, telling it what units it belongs to, and if it has a value
+    or candidate numbers.
+    It then builds constraints in each unit, which effectively enforces the
+    rules of sudoku.
+
+    Parameters
+    ___________
+    sudoku : list[int]
+        A list of 81 values. This list is passed through because candidatedSudoku,
+        which is returned from the units function, was built from the sudoku puzzle.
+    
+    Returns
+    ________
+    constraintG : Graph()
+        Returns the constraint graph.
     """
+    rowList, columnList, boxList, candidatedSudoku, cellUnitList = units(sudoku)
     constraintG = Graph()
-    for i in sudoku:
-        constraintG.addVertex()
+    for cell in range(81):
+        constraintG.addVertex(cell)
+        r, c, b = cellUnitList[cell]
+        vertex = constraintG.getVertex(cell)
+        vertex.row = r
+        vertex.column = c
+        vertex.box = b
+        vertex.valOrCand = candidatedSudoku[cell]
+    for aRow in rowList:
+        for i in range(len(aRow)):
+            for j in range(i+1, len(aRow)):
+                cellA = aRow[i]
+                cellB = aRow[j]
+                constraintG.addEdge(cellA, cellB)
+                constraintG.addEdge(cellB, cellA)
+    for aColumn in columnList:
+        for i in range(len(aColumn)):
+            for j in range(i+1, len(aColumn)):
+                cellA = aColumn[i]
+                cellB = aColumn[j]
+                constraintG.addEdge(cellA, cellB)
+                constraintG.addEdge(cellB, cellA)
+    for aBox in boxList:
+        for i in range(len(aBox)):
+            for j in range(i+1, len(aBox)):
+                cellA = aBox[i]
+                cellB = aBox[j]
+                constraintG.addEdge(cellA, cellB)
+                constraintG.addEdge(cellB, cellA)
     return constraintG
+
+    # this is just some test code
+    # print("test A\n")
+    # for v in constraintG:
+    #     print(v.id, "→", len(v.getConnections()))
+    # print("test B\n")
+    # for neighbor in constraintG.getVertex(3).getConnections():
+    #     print(neighbor.id)
+def candidatePropagation(constraintG):
+    pass
 def nakedPairs(constraintG):
     pass
-
-
+    
 if __name__ == "__main__":
-    sudoku = [5,3,4,6,7,8,9,1,2,
-              6,7,2,1,9,5,3,4,8,
-              1,9,8,3,4,2,5,6,7,
-              8,5,9,7,6,1,4,2,3,
-              4,2,6,8,5,3,7,9,1,
-              7,1,3,9,2,4,8,5,6,
-              9,6,1,5,3,7,2,8,4,
-              2,8,7,4,1,9,6,3,5,
-              3,4,5,2,8,6,1,7,9]
-    units(sudoku)
-    # sudoku = [1, 2, 3] #etc
-    # pass
+    # test for just row, column, and box lists code
+    # sudoku = [5,3,4,6,7,8,9,1,2,
+    #           6,7,2,1,9,5,3,4,8,
+    #           1,9,8,3,4,2,5,6,7,
+    #           8,5,9,7,6,1,4,2,3,
+    #           4,2,6,8,5,3,7,9,1,
+    #           7,1,3,9,2,4,8,5,6,
+    #           9,6,1,5,3,7,2,8,4,
+    #           2,8,7,4,1,9,6,3,5,
+    #           3,4,5,2,8,6,1,7,9]
 
-
-
-# backup code
-# def units(sudoku):
-#     rowList = []
-#     columnList = []
-#     boxList = []
-#     cellList = []
-#     for r in range(9):
-#         start = r * 9
-#         # rowID = [start + i for i in range(9)]
-#         rowList.append([start + i for i in range(9)])
-#         # rowList += rowID
-#         # r = r + 1
-#     for c in range(9):
-#         # columnID = [c + 9*i for i in range(9)]
-#         columnList.append([c + 9*i for i in range(9)])
-#         # columnList += columnID
-#         # c = c + 1
-#     for b in range(9):
-#         boxRow = (b // 3)
-#         boxColumn = (b % 3)
-#         start = (boxRow * 3 * 9) + (boxColumn * 3)
-#         # boxID = [
-#         #     start + r*9 + c
-#         #     for r in range(3)
-#         #     for c in range(3)
-#         # ]
-#         boxList.append([
-#             start + r*9 + c
-#             for r in range(3)
-#             for c in range(3)
-#         ])
-#         # boxList += boxID
-#         # b = b+1
-#     for cell in range(81):
-#         r = cell // 9
-#         c = cell % 9
-#         b = (r//3)*3 + (c//3)
-#         cellList.append((r, c, b))
-#     print(rowList, "AAAAAAAAAAAAAAAAA\n\n", columnList, "AAAAAAAAAAAAAAAAA\n\n", boxList, "AAAAAAAAAAAAAAAAA\n\n", cellList)
-#     print(cellList[9])
-#     print(cellList[79])
-# def buildConstraintGraph(sudoku):
-#     """
-#     This function takes the given sudoku puzzle and builds a constraint graph
-#     that can enforce the rules of sudoku.
-#     """
-#     constraintG = Graph()
-#     for i in sudoku:
-#         constraintG.addVertex()
-#     return constraintG
-# def nakedPairs(constraintG):
-#     pass
-
-
-# if __name__ == "__main__":
-#     sudoku = [5,3,4,6,7,8,9,1,2,
-#               6,7,2,1,9,5,3,4,8,
-#               1,9,8,3,4,2,5,6,7,
-#               8,5,9,7,6,1,4,2,3,
-#               4,2,6,8,5,3,7,9,1,
-#               7,1,3,9,2,4,8,5,6,
-#               9,6,1,5,3,7,2,8,4,
-#               2,8,7,4,1,9,6,3,5,
-#               3,4,5,2,8,6,1,7,9]
-#     units(sudoku)
-#     # sudoku = [1, 2, 3] #etc
-#     # pass
+    # this is the level 1 daily puzzle for 11/26/25 from sudokuwiki.org 
+    sudoku = [0,9,6,0,0,0,4,5,0,
+              0,4,0,0,5,0,0,0,0,
+              5,0,0,0,1,2,0,0,9,
+              0,0,0,5,0,0,0,0,0,
+              0,3,9,0,0,0,8,1,0,
+              0,0,0,0,0,4,0,0,0,
+              9,0,0,1,2,0,0,0,7,
+              0,0,0,0,3,0,0,2,0,
+              0,8,2,0,0,0,1,6,0]
+    constraintG = buildConstraintGraph(sudoku)
+    for v in constraintG:
+        print(v.valOrCand)
