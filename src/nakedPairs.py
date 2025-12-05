@@ -74,11 +74,7 @@ def units(sudoku):
         if value == 0:
             value = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         candidatedSudoku.append(value)
-    # print("List of rows\n", rowList,
-    #       "\n\nList of columns\n", columnList,
-    #       "\n\nList of boxes\n", boxList,
-    #       "\n\nList of cell values\n", candidatedSudoku,
-    #       "\n\nList of each cells row, column, and box\n", cellUnitList)
+        
     return rowList, columnList, boxList, candidatedSudoku, cellUnitList
 def buildConstraintGraph(sudoku):
     """
@@ -141,8 +137,25 @@ def buildConstraintGraph(sudoku):
     # print("test B\n")
     # for neighbor in constraintG.getVertex(3).getConnections():
     #     print(neighbor.id)
-def candidatePropagation(constraintG):
-    rowList, columnList, boxList, candidatedSudoku, cellUnitList = units(sudoku)
+def constraintPropagation(constraintG):
+    """
+    constraintPropagation
+    ---------------------
+    This function takes the constraint graph, constraintG, and removes
+    candidate numbers from unsolved cells using the defined constraints.
+
+    Parameters
+    ___________
+    constraintG : Graph()
+        The constraint graph created in the buildConstraintGraph function.
+        This could be the initial graph, or it could have previously been
+        propagated.
+    
+    Returns
+    ________
+    constraintG : Graph()
+        Returns the propagated graph so strategies can operate on it.
+    """
     for vertA in constraintG:
         constraintG.getVertex(vertA)
         if isinstance(vertA.valOrCand, int):
@@ -153,15 +166,6 @@ def candidatePropagation(constraintG):
                         if i == vertA.valOrCand:
                             neighbor.valOrCand.remove(i)
     return constraintG
-    # for cell in range(81):
-    #     constraintG.getVertex(cell)
-    #     if type(cell.valOrCand) is int:
-    #         for neighbor in cell.getConnections():
-    #             constraintG.getVertex(neighbor)
-    #             if type(neighbor.valOrCand) is list:
-    #                 for i in neighbor.valOrCand:
-    #                     if i == cell.valOrCand:
-    #                         neighbor.valOrCand.pop(i)
 def nakedPairs(constraintG):
     pass
     
@@ -191,16 +195,15 @@ if __name__ == "__main__":
     constraintG = buildConstraintGraph(sudoku)
     # creates the initial constraint graph.
     # it should not be called again, because it would recreate the graph
-    # using the inital puzzle. we don't want this
+    # using the initial puzzle. we don't want this
 
     # TODO
     # the problem here is that I want to be able to call strategies
     # multiple times. could i just keep passing constraintG into the function?
     # or do i need to redefine it each time it's called and the function runs?
     # if i need to redefine it, i could do so in a for loop.
-    candidatePropagation(constraintG)
-    constraintG = candidatePropagation(constraintG)
+    constraintPropagation(constraintG)
+    constraintG = constraintPropagation(constraintG)
     for v in constraintG:
             print(v.valOrCand)
-    # constraintG = buildConstraintGraph(sudoku)
     
