@@ -166,6 +166,17 @@ def constraintPropagation(constraintG):
                         if i == vertA.valOrCand:
                             neighbor.valOrCand.remove(i)
     return constraintG
+def nakedSingles(constraintG):
+    for vertA in constraintG:
+        constraintG.getVertex(vertA)
+        if isinstance(vertA.valOrCand, list):
+            if len(vertA.valOrCand) == 1:
+                vertA.valOrCand = vertA.valOrCand.pop()
+    constraintPropagation(constraintG)
+    print("UPDATED BOARD:\n")
+    for v in constraintG:
+        print(v.valOrCand)
+    return constraintG
 def nakedPairs(constraintG):
     pass
     
@@ -206,4 +217,4 @@ if __name__ == "__main__":
     constraintG = constraintPropagation(constraintG)
     for v in constraintG:
             print(v.valOrCand)
-    
+    nakedSingles(constraintG)
