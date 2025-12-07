@@ -106,6 +106,7 @@ def buildConstraintGraph(sudoku):
         vertex.row = r
         vertex.column = c
         vertex.box = b
+        vertex.residence = (r, c, b)
         vertex.valOrCand = candidatedSudoku[cell]
     for aRow in rowList:
         for i in range(len(aRow)):
@@ -178,20 +179,60 @@ def nakedSingles(constraintG):
         print(v.valOrCand)
     return constraintG
 def nakedPairs(constraintG):
-    pass
-    
+    for vertA in constraintG:
+        constraintG.getVertex(vertA)
+        if isinstance(vertA.valOrCand, list) and len(vertA.valOrCand) == 2:
+            for neighbor in vertA.getConnections():
+                constraintG.getVertex(neighbor)
+                if isinstance(neighbor.valOrCand, list) and len(neighbor.valOrCand) == 2:
+                    if neighbor.valOrCand == vertA.valOrCand:
+                        if vertA.row == neighbor.row:
+                            for anyVert in constraintG:
+                                constraintG.getVertex(anyVert)
+                                if isinstance(anyVert.valOrCand, list):
+                                    if anyVert.row == vertA.row and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                        for i in anyVert.valOrCand[:]:
+                                            if i in vertA.valOrCand:
+                                                anyVert.valOrCand.remove(i)
+                        if vertA.column == neighbor.column:
+                            for anyVert in constraintG:
+                                constraintG.getVertex(anyVert)
+                                if isinstance(anyVert.valOrCand, list):
+                                    if anyVert.column == vertA.column and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                        for i in anyVert.valOrCand[:]:
+                                            if i in vertA.valOrCand:
+                                                anyVert.valOrCand.remove(i)  
+                        if vertA.box == neighbor.box:
+                            for anyVert in constraintG:
+                                constraintG.getVertex(anyVert)
+                                if isinstance(anyVert.valOrCand, list):
+                                    if anyVert.box == vertA.box and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                        for i in anyVert.valOrCand[:]:
+                                            if i in vertA.valOrCand:
+                                                anyVert.valOrCand.remove(i)
+                        if vertA.row and vertA.box == neighbor.row and neighbor.box:
+                            for anyVert in constraintG:
+                                constraintG.getVertex(anyVert)
+                                if isinstance(anyVert.valOrCand, list):
+                                    if (anyVert.row and anyVert.box == vertA.row and vertA.box) and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                        for i in anyVert.valOrCand[:]:
+                                            if i in vertA.valOrCand:
+                                                anyVert.valOrCand.remove(i)
+                        if vertA.column and vertA.box == neighbor.column and neighbor.box:
+                            for anyVert in constraintG:
+                                constraintG.getVertex(anyVert)
+                                if isinstance(anyVert.valOrCand, list):
+                                    if (anyVert.column and anyVert.box == vertA.column and vertA.box) and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                        for i in anyVert.valOrCand[:]:
+                                            if i in vertA.valOrCand:
+                                                anyVert.valOrCand.remove(i)
+    constraintPropagation(constraintG)
+    print("UPDATED BOARD:\n")
+    for v in constraintG:
+        print(v.valOrCand)
+    return constraintG
+# ADD UNIT NUMBERS TO DETERMINE SHARED RESIDENCe
 if __name__ == "__main__":
-    # test for just row, column, and box lists code
-    # sudoku = [5,3,4,6,7,8,9,1,2,
-    #           6,7,2,1,9,5,3,4,8,
-    #           1,9,8,3,4,2,5,6,7,
-    #           8,5,9,7,6,1,4,2,3,
-    #           4,2,6,8,5,3,7,9,1,
-    #           7,1,3,9,2,4,8,5,6,
-    #           9,6,1,5,3,7,2,8,4,
-    #           2,8,7,4,1,9,6,3,5,
-    #           3,4,5,2,8,6,1,7,9]
-
     # this is the level 1 daily puzzle for 11/26/25 from sudokuwiki.org 
     sudoku = [0,9,6,0,0,0,4,5,0,
               0,4,0,0,5,0,0,0,0,
@@ -208,13 +249,9 @@ if __name__ == "__main__":
     # it should not be called again, because it would recreate the graph
     # using the initial puzzle. we don't want this
 
-    # TODO
-    # the problem here is that I want to be able to call strategies
-    # multiple times. could i just keep passing constraintG into the function?
-    # or do i need to redefine it each time it's called and the function runs?
-    # if i need to redefine it, i could do so in a for loop.
     constraintPropagation(constraintG)
-    constraintG = constraintPropagation(constraintG)
-    for v in constraintG:
-            print(v.valOrCand)
-    nakedSingles(constraintG)
+    # constraintG = constraintPropagation(constraintG)
+    nakedPairs(constraintG)
+    # for v in constraintG:
+    #         print(v.valOrCand)
+    # nakedSingles(constraintG)
