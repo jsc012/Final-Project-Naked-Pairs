@@ -41,4 +41,5 @@ To fix it, the naked pairs function should be reorganized and refactored. The fu
 Then, the program should individually evaluate each pair and remove the candidates from the set intersetion of their connections (what cells are in both of their connections). Then, it should propagate the board again.
 For following pairs, it should also check to see if the naked pair is still a naked pair, or if prior propagation has eliminated a candidate from the pair.
 
+Documentation: https://jsc012.github.io/Final-Project-Naked-Pairs/
 [^1]: [Constraint satisfaction problem](Constraint_satisfaction_problem)
