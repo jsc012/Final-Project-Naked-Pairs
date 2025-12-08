@@ -168,12 +168,33 @@ def constraintPropagation(constraintG):
                             neighbor.valOrCand.remove(i)
     return constraintG
 def nakedSingles(constraintG):
+    """
+    nakedSingles
+    -------------
+    This function looks for a vertex on the graph, and if the type of
+    the vertex's valOrCand attribute is type list, and the list is of
+    length 1, then it sets the valOrCand attribute equal to the sole
+    candidate in that list.
+
+    Parameters
+    ___________
+    constraintG : Graph()
+        The constraint graph created in the buildConstraintGraph function.
+        This has been propagated through the constraintPropagation function.
+        It may have been run through other strategies or propagated further
+        than it initially was.
+    
+    Returns
+    ________
+    constraintG : Graph()
+        Returns the edited graph so it can be used by other functions.
+    """
     for vertA in constraintG:
         constraintPropagation(constraintG)
         constraintG.getVertex(vertA)
         if isinstance(vertA.valOrCand, list):
             if len(vertA.valOrCand) == 1:
-                print(vertA.residence)
+                print("Naked Single Found:\n",vertA.residence)
                 vertA.valOrCand = vertA.valOrCand.pop()
     constraintPropagation(constraintG)
     print("UPDATED BOARD:\n")
@@ -181,6 +202,26 @@ def nakedSingles(constraintG):
         print(v.valOrCand)
     return constraintG
 def nakedPairs(constraintG):
+    """
+    nakedPairs
+    -----------
+    This function finds a pair of cells in the same unit that share two
+    remaining candidate numbers. It then removes those candidates from other cells
+    in their shared unit.
+
+    Parameters
+    ___________
+    constraintG : Graph()
+        The constraint graph created in the buildConstraintGraph function.
+        This has been propagated through the constraintPropagation function.
+        It may have been run through other strategies or propagated further
+        than it initially was.
+
+    Returns
+    ________
+    constraintG : Graph()
+        Returns the edited graph so it can be used by other functions.
+    """
     for vertA in constraintG:
         constraintG.getVertex(vertA)
         if isinstance(vertA.valOrCand, list):
@@ -190,7 +231,7 @@ def nakedPairs(constraintG):
                     if isinstance(neighbor.valOrCand, list): 
                         if len(neighbor.valOrCand) == 2:
                             if neighbor.valOrCand == vertA.valOrCand:
-                                print(vertA.residence, neighbor.residence, vertA.valOrCand, neighbor.valOrCand)
+                                print("Naked Pair Found:\n", vertA.residence, neighbor.residence, vertA.valOrCand, neighbor.valOrCand)
                                 if vertA.row == neighbor.row:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -199,7 +240,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)
-                                                        return
+                                                        
                                 if vertA.column == neighbor.column:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -208,7 +249,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)  
-                                                        return
+                                                        
                                 if vertA.box == neighbor.box:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -217,7 +258,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)
-                                                        return
+                                                        
                                 if vertA.row and vertA.box == neighbor.row and neighbor.box:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -226,7 +267,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)
-                                                        return
+                                                        
                                 if vertA.column and vertA.box == neighbor.column and neighbor.box:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -235,54 +276,69 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)
-                                                        return
+                                                        
     constraintPropagation(constraintG)
     print("UPDATED BOARD:\n")
     for v in constraintG:
         print(v.valOrCand)
     return constraintG
-# ADD UNIT NUMBERS TO DETERMINE SHARED RESIDENCe
 if __name__ == "__main__":
+    # The program can solve this puzzle. I think the program is able to handle
+        # less naked pairs.
     # this is the level 1 daily puzzle for 11/26/25 from sudokuwiki.org 
-    # sudoku = [0,9,6,0,0,0,4,5,0,
-    #           0,4,0,0,5,0,0,0,0,
-    #           5,0,0,0,1,2,0,0,9,
-    #           0,0,0,5,0,0,0,0,0,
-    #           0,3,9,0,0,0,8,1,0,
-    #           0,0,0,0,0,4,0,0,0,
-    #           9,0,0,1,2,0,0,0,7,
-    #           0,0,0,0,3,0,0,2,0,
-    #           0,8,2,0,0,0,1,6,0]
-
-
-    # level 1, 12/8/25
-    sudoku = [0,0,0,0,0,4,0,0,5,9,0,0,0,2,0,0,8,3,0,0,2,9,0,0,0,0,0,0,0,5,0,0,8,0,0,0,0,0,6,2,0,1,4,0,0,0,0,0,6,0,0,9,0,0,0,0,0,5,0,6,7,0,0,5,4,0,0,7,0,0,0,1,7,0,0,1,0,0,0,0,0]
-    # this:
+    sudoku = [0,9,6,0,0,0,4,5,0,
+              0,4,0,0,5,0,0,0,0,
+              5,0,0,0,1,2,0,0,9,
+              0,0,0,5,0,0,0,0,0,
+              0,3,9,0,0,0,8,1,0,
+              0,0,0,0,0,4,0,0,0,
+              9,0,0,1,2,0,0,0,7,
+              0,0,0,0,3,0,0,2,0,
+              0,8,2,0,0,0,1,6,0]
     constraintG = buildConstraintGraph(sudoku)
-    # creates the initial constraint graph.
-    # it should not be called again, because it would recreate the graph
-    # using the initial puzzle. we don't want this
-
     constraintPropagation(constraintG)
     for v in constraintG:
         print(v.valOrCand)
     nakedSingles(constraintG)
+    nakedPairs(constraintG)
     nakedSingles(constraintG)
     nakedSingles(constraintG)
-    nakedPairs(constraintG)
-    nakedPairs(constraintG)
-    # done = False
-    # while done == False:
-    #     for v in constraintG:
-    #         constraintG.getVertex(v)
-    #         if isinstance(v.valOrCand, list):
-    #             if len(v.valOrCand) <= 2:
-    #                 nakedPairs(constraintG)
-    #                 nakedSingles(constraintG)
-    #         else:
-    #             for v in constraintG:
-    #                 constraintG.getVertex(v)
-    #                 if isinstance(v.valOrCand, int):
-    #                     pass
-    #             done = True
-    # constraintG = constraintPropagation(constraintG)
+    nakedSingles(constraintG)
+    nakedSingles(constraintG)
+    nakedSingles(constraintG)
+    nakedSingles(constraintG)
+    nakedSingles(constraintG)
+    #####################################
+
+    # This is an example of the code NOT working. I need to re-examine how the
+        # nakedPairs code works. I did not use "and" correctly. The program was likely
+        # overwhelmed by the amount of naked pairs it found, and removed incorrect candidates
+    # To fix this, I need to refactor the algorithm so it checks the set intersection of each pair cells candidates.
+        # That way, it ONLY removes from the correct connections.
+    ################### UNCOMMENT:
+    # # this is the level 1 daily puzzle for 12/8/25 from sudokuwiki.org
+    # sudoku = [0,0,0,0,0,4,0,0,5,
+    #           9,0,0,0,2,0,0,8,3,
+    #           0,0,2,9,0,0,0,0,0,
+    #           0,0,5,0,0,8,0,0,0,
+    #           0,0,6,2,0,1,4,0,0,
+    #           0,0,0,6,0,0,9,0,0,
+    #           0,0,0,5,0,6,7,0,0,
+    #           5,4,0,0,7,0,0,0,1,
+    #           7,0,0,1,0,0,0,0,0]
+    # constraintG = buildConstraintGraph(sudoku) # initialize the graph
+    # constraintPropagation(constraintG) # initial constraint propagation
+    # nakedSingles(constraintG)
+    # nakedSingles(constraintG)
+    # nakedSingles(constraintG)
+    # nakedPairs(constraintG) ################ optionally, uncomment up to here to see first error.
+    # nakedSingles(constraintG)
+    # nakedSingles(constraintG)
+    # nakedPairs(constraintG)
+    # nakedSingles(constraintG)
+    # nakedSingles(constraintG)
+    # nakedSingles(constraintG)
+    # nakedSingles(constraintG)
+    # nakedSingles(constraintG)
+    # nakedSingles(constraintG)
+    #######################################

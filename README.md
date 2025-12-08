@@ -24,4 +24,21 @@ If two cells in a unit have only the same two candidate numbers remaining, then 
 ---
 This is a basic strategy, but I hope that I can later program more complex strategies to run against difficult Sudoku puzzles.
 
+---
+# Final code:
+The program did not turn out as I had hoped. I did implement the naked singles strategy, but the function that executes naked pairs is very flawed.
+In the code, there are two example puzzles.
+
+---
+The first example can successfully solve the puzzle using both naked singles and naked pairs.
+
+---
+The second example, the one in comments, is not solved. When the naked pairs function is called, it identifies about 6 naked pairs throughout the board. It is not recording the naked pairs and eliminating necessary candidates when the board has been completely searched, but it's instead eliminating candidates as soon as it finds a pair, then it continues looking through the board.
+Also, I am not correctly using "and" throughout the function.
+
+---
+To fix it, the naked pairs function should be reorganized and refactored. The function should look through the board and, when it finds a naked pair, add the units of the connected vertices of cellA and cellB to a list. It should keep going through the board and repeating this process.
+Then, the program should individually evaluate each pair and remove the candidates from the set intersetion of their connections (what cells are in both of their connections). Then, it should propagate the board again.
+For following pairs, it should also check to see if the naked pair is still a naked pair, or if prior propagation has eliminated a candidate from the pair.
+
 [^1]: [Constraint satisfaction problem](Constraint_satisfaction_problem)
