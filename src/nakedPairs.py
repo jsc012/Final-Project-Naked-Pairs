@@ -173,8 +173,8 @@ def nakedSingles(constraintG):
         constraintG.getVertex(vertA)
         if isinstance(vertA.valOrCand, list):
             if len(vertA.valOrCand) == 1:
+                print(vertA.residence)
                 vertA.valOrCand = vertA.valOrCand.pop()
-
     constraintPropagation(constraintG)
     print("UPDATED BOARD:\n")
     for v in constraintG:
@@ -199,6 +199,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)
+                                                        return
                                 if vertA.column == neighbor.column:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -207,6 +208,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)  
+                                                        return
                                 if vertA.box == neighbor.box:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -215,6 +217,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)
+                                                        return
                                 if vertA.row and vertA.box == neighbor.row and neighbor.box:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -223,6 +226,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)
+                                                        return
                                 if vertA.column and vertA.box == neighbor.column and neighbor.box:
                                     for anyVert in vertA.getConnections() and neighbor.getConnections():
                                         constraintG.getVertex(anyVert)
@@ -231,6 +235,7 @@ def nakedPairs(constraintG):
                                                 for i in anyVert.valOrCand[:]:
                                                     if i in vertA.valOrCand:
                                                         anyVert.valOrCand.remove(i)
+                                                        return
     constraintPropagation(constraintG)
     print("UPDATED BOARD:\n")
     for v in constraintG:
@@ -239,15 +244,19 @@ def nakedPairs(constraintG):
 # ADD UNIT NUMBERS TO DETERMINE SHARED RESIDENCe
 if __name__ == "__main__":
     # this is the level 1 daily puzzle for 11/26/25 from sudokuwiki.org 
-    sudoku = [0,9,6,0,0,0,4,5,0,
-              0,4,0,0,5,0,0,0,0,
-              5,0,0,0,1,2,0,0,9,
-              0,0,0,5,0,0,0,0,0,
-              0,3,9,0,0,0,8,1,0,
-              0,0,0,0,0,4,0,0,0,
-              9,0,0,1,2,0,0,0,7,
-              0,0,0,0,3,0,0,2,0,
-              0,8,2,0,0,0,1,6,0]
+    # sudoku = [0,9,6,0,0,0,4,5,0,
+    #           0,4,0,0,5,0,0,0,0,
+    #           5,0,0,0,1,2,0,0,9,
+    #           0,0,0,5,0,0,0,0,0,
+    #           0,3,9,0,0,0,8,1,0,
+    #           0,0,0,0,0,4,0,0,0,
+    #           9,0,0,1,2,0,0,0,7,
+    #           0,0,0,0,3,0,0,2,0,
+    #           0,8,2,0,0,0,1,6,0]
+
+
+    # level 1, 12/8/25
+    sudoku = [0,0,0,0,0,4,0,0,5,9,0,0,0,2,0,0,8,3,0,0,2,9,0,0,0,0,0,0,0,5,0,0,8,0,0,0,0,0,6,2,0,1,4,0,0,0,0,0,6,0,0,9,0,0,0,0,0,5,0,6,7,0,0,5,4,0,0,7,0,0,0,1,7,0,0,1,0,0,0,0,0]
     # this:
     constraintG = buildConstraintGraph(sudoku)
     # creates the initial constraint graph.
@@ -255,20 +264,25 @@ if __name__ == "__main__":
     # using the initial puzzle. we don't want this
 
     constraintPropagation(constraintG)
-    # for v in constraintG:
-    #         print(v.valOrCand)
-    done = False
-    while done == False:
-        for v in constraintG:
-            constraintG.getVertex(v)
-            if isinstance(v.valOrCand, list):
-                if len(v.valOrCand) <= 2:
-                    nakedPairs(constraintG)
-                    nakedSingles(constraintG)
-            else:
-                for v in constraintG:
-                    constraintG.getVertex(v)
-                    if isinstance(v.valOrCand, int):
-                        pass
-                done = True
+    for v in constraintG:
+        print(v.valOrCand)
+    nakedSingles(constraintG)
+    nakedSingles(constraintG)
+    nakedSingles(constraintG)
+    nakedPairs(constraintG)
+    nakedPairs(constraintG)
+    # done = False
+    # while done == False:
+    #     for v in constraintG:
+    #         constraintG.getVertex(v)
+    #         if isinstance(v.valOrCand, list):
+    #             if len(v.valOrCand) <= 2:
+    #                 nakedPairs(constraintG)
+    #                 nakedSingles(constraintG)
+    #         else:
+    #             for v in constraintG:
+    #                 constraintG.getVertex(v)
+    #                 if isinstance(v.valOrCand, int):
+    #                     pass
+    #             done = True
     # constraintG = constraintPropagation(constraintG)
