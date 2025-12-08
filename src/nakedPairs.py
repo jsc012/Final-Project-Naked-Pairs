@@ -12,7 +12,7 @@ from pythonds.graphs import Graph, Vertex
 def units(sudoku):
     """
     units
-    ------
+    ---------
     Defines the rows, columns, and boxes of a sudoku 
     board. Also creates a tuple for each cell on the
     board, based on the row, column, and box each cell 
@@ -80,7 +80,7 @@ def units(sudoku):
 def buildConstraintGraph(sudoku):
     """
     buildConstraintGraph
-    ---------------------
+    ------------------------
     This function builds a graph of the sudoku board, 
     adding information to each cell, telling it what 
     units it belongs to, and if it has a value or some
@@ -142,7 +142,7 @@ def buildConstraintGraph(sudoku):
 def constraintPropagation(constraintG):
     """
     constraintPropagation
-    ---------------------
+    ------------------------
     This function takes the constraint graph, constraintG, 
     and removes candidate numbers from unsolved cells using 
     the defined constraints.
@@ -172,7 +172,7 @@ def constraintPropagation(constraintG):
 def nakedSingles(constraintG):
     """
     nakedSingles
-    -------------
+    ----------------
     This function looks for a vertex on the graph, 
     and if the type of the vertex's valOrCand attribute
     is type list, and the list is of length 1, then it 
@@ -207,7 +207,7 @@ def nakedSingles(constraintG):
 def nakedPairs(constraintG):
     """
     nakedPairs
-    -----------
+    --------------
     This function finds a pair of cells in the same unit that share two remaining candidate numbers. It then removes those candidates from other cells in their shared unit.
 
     Parameters
