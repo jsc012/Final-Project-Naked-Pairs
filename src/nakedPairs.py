@@ -169,10 +169,12 @@ def constraintPropagation(constraintG):
     return constraintG
 def nakedSingles(constraintG):
     for vertA in constraintG:
+        constraintPropagation(constraintG)
         constraintG.getVertex(vertA)
         if isinstance(vertA.valOrCand, list):
             if len(vertA.valOrCand) == 1:
                 vertA.valOrCand = vertA.valOrCand.pop()
+
     constraintPropagation(constraintG)
     print("UPDATED BOARD:\n")
     for v in constraintG:
@@ -181,51 +183,54 @@ def nakedSingles(constraintG):
 def nakedPairs(constraintG):
     for vertA in constraintG:
         constraintG.getVertex(vertA)
-        if isinstance(vertA.valOrCand, list) and len(vertA.valOrCand) == 2:
-            for neighbor in vertA.getConnections():
-                constraintG.getVertex(neighbor)
-                if isinstance(neighbor.valOrCand, list) and len(neighbor.valOrCand) == 2:
-                    if neighbor.valOrCand == vertA.valOrCand:
-                        if vertA.row == neighbor.row:
-                            for anyVert in constraintG:
-                                constraintG.getVertex(anyVert)
-                                if isinstance(anyVert.valOrCand, list):
-                                    if anyVert.row == vertA.row and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
-                                        for i in anyVert.valOrCand[:]:
-                                            if i in vertA.valOrCand:
-                                                anyVert.valOrCand.remove(i)
-                        if vertA.column == neighbor.column:
-                            for anyVert in constraintG:
-                                constraintG.getVertex(anyVert)
-                                if isinstance(anyVert.valOrCand, list):
-                                    if anyVert.column == vertA.column and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
-                                        for i in anyVert.valOrCand[:]:
-                                            if i in vertA.valOrCand:
-                                                anyVert.valOrCand.remove(i)  
-                        if vertA.box == neighbor.box:
-                            for anyVert in constraintG:
-                                constraintG.getVertex(anyVert)
-                                if isinstance(anyVert.valOrCand, list):
-                                    if anyVert.box == vertA.box and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
-                                        for i in anyVert.valOrCand[:]:
-                                            if i in vertA.valOrCand:
-                                                anyVert.valOrCand.remove(i)
-                        if vertA.row and vertA.box == neighbor.row and neighbor.box:
-                            for anyVert in constraintG:
-                                constraintG.getVertex(anyVert)
-                                if isinstance(anyVert.valOrCand, list):
-                                    if (anyVert.row and anyVert.box == vertA.row and vertA.box) and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
-                                        for i in anyVert.valOrCand[:]:
-                                            if i in vertA.valOrCand:
-                                                anyVert.valOrCand.remove(i)
-                        if vertA.column and vertA.box == neighbor.column and neighbor.box:
-                            for anyVert in constraintG:
-                                constraintG.getVertex(anyVert)
-                                if isinstance(anyVert.valOrCand, list):
-                                    if (anyVert.column and anyVert.box == vertA.column and vertA.box) and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
-                                        for i in anyVert.valOrCand[:]:
-                                            if i in vertA.valOrCand:
-                                                anyVert.valOrCand.remove(i)
+        if isinstance(vertA.valOrCand, list):
+            if len(vertA.valOrCand) == 2:
+                for neighbor in vertA.getConnections():
+                    constraintG.getVertex(neighbor)
+                    if isinstance(neighbor.valOrCand, list): 
+                        if len(neighbor.valOrCand) == 2:
+                            if neighbor.valOrCand == vertA.valOrCand:
+                                print(vertA.residence, neighbor.residence, vertA.valOrCand, neighbor.valOrCand)
+                                if vertA.row == neighbor.row:
+                                    for anyVert in vertA.getConnections() and neighbor.getConnections():
+                                        constraintG.getVertex(anyVert)
+                                        if isinstance(anyVert.valOrCand, list):
+                                            if anyVert.row == vertA.row and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                                for i in anyVert.valOrCand[:]:
+                                                    if i in vertA.valOrCand:
+                                                        anyVert.valOrCand.remove(i)
+                                if vertA.column == neighbor.column:
+                                    for anyVert in vertA.getConnections() and neighbor.getConnections():
+                                        constraintG.getVertex(anyVert)
+                                        if isinstance(anyVert.valOrCand, list):
+                                            if anyVert.column == vertA.column and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                                for i in anyVert.valOrCand[:]:
+                                                    if i in vertA.valOrCand:
+                                                        anyVert.valOrCand.remove(i)  
+                                if vertA.box == neighbor.box:
+                                    for anyVert in vertA.getConnections() and neighbor.getConnections():
+                                        constraintG.getVertex(anyVert)
+                                        if isinstance(anyVert.valOrCand, list):
+                                            if anyVert.box == vertA.box and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                                for i in anyVert.valOrCand[:]:
+                                                    if i in vertA.valOrCand:
+                                                        anyVert.valOrCand.remove(i)
+                                if vertA.row and vertA.box == neighbor.row and neighbor.box:
+                                    for anyVert in vertA.getConnections() and neighbor.getConnections():
+                                        constraintG.getVertex(anyVert)
+                                        if isinstance(anyVert.valOrCand, list):
+                                            if (anyVert.row and anyVert.box == vertA.row and vertA.box) and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                                for i in anyVert.valOrCand[:]:
+                                                    if i in vertA.valOrCand:
+                                                        anyVert.valOrCand.remove(i)
+                                if vertA.column and vertA.box == neighbor.column and neighbor.box:
+                                    for anyVert in vertA.getConnections() and neighbor.getConnections():
+                                        constraintG.getVertex(anyVert)
+                                        if isinstance(anyVert.valOrCand, list):
+                                            if (anyVert.column and anyVert.box == vertA.column and vertA.box) and anyVert.residence != vertA.residence and anyVert.residence != neighbor.residence:
+                                                for i in anyVert.valOrCand[:]:
+                                                    if i in vertA.valOrCand:
+                                                        anyVert.valOrCand.remove(i)
     constraintPropagation(constraintG)
     print("UPDATED BOARD:\n")
     for v in constraintG:
@@ -250,8 +255,20 @@ if __name__ == "__main__":
     # using the initial puzzle. we don't want this
 
     constraintPropagation(constraintG)
-    # constraintG = constraintPropagation(constraintG)
-    nakedPairs(constraintG)
     # for v in constraintG:
     #         print(v.valOrCand)
-    # nakedSingles(constraintG)
+    done = False
+    while done == False:
+        for v in constraintG:
+            constraintG.getVertex(v)
+            if isinstance(v.valOrCand, list):
+                if len(v.valOrCand) <= 2:
+                    nakedPairs(constraintG)
+                    nakedSingles(constraintG)
+            else:
+                for v in constraintG:
+                    constraintG.getVertex(v)
+                    if isinstance(v.valOrCand, int):
+                        pass
+                done = True
+    # constraintG = constraintPropagation(constraintG)
