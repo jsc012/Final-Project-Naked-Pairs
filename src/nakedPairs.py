@@ -208,11 +208,7 @@ def nakedPairs(constraintG):
     """
     nakedPairs
     -----------
-    This function finds a pair of cells in 
-    the same unit that share two remaining 
-    candidate numbers. It then removes those
-    candidates from other cells in their shared 
-    unit.
+    This function finds a pair of cells in the same unit that share two remaining candidate numbers. It then removes those candidates from other cells in their shared unit.
 
     Parameters
     ___________
