@@ -13,12 +13,11 @@ def units(sudoku):
     """
     units
     ------------
-    Defines the rows, columns, and boxes of a sudoku 
-    board. Also creates a tuple for each cell on the
-    board, based on the row, column, and box each cell 
-    belongs to. Also brings in the actual sudoku puzzle, 
-    and makes a list of that, making candidates for cells 
-    that equal 0.
+    Defines the rows, columns, and boxes of
+    a sudoku board. Also creates a tuple for each
+    cell on the board, based on the row, column, and 
+    box each cell belongs to. Also brings in the actual 
+    sudoku puzzle, and makes a list of that, making candidates for cells that equal 0.
 
     Parameters
     _________________
@@ -81,11 +80,10 @@ def buildConstraintGraph(sudoku):
     """
     buildConstraintGraph
     -----------------------------------
-    This function builds a graph of the sudoku board, 
-    adding information to each cell, telling it what 
-    units it belongs to, and if it has a value or some
-    candidate numbers. It then builds constraints in 
-    each unit, which enforces the rules of sudoku.
+    This function builds a graph of the sudoku 
+    board, adding information to each cell, telling it what units 
+    it belongs to, and if it has a value or some candidate numbers. 
+    It then builds constraints in each unit, which enforces the rules of sudoku.
 
     Parameters
     ___________________
@@ -144,8 +142,7 @@ def constraintPropagation(constraintG):
     constraintPropagation
     -----------------------------------
     This function takes the constraint graph, constraintG, 
-    and removes candidate numbers from unsolved cells using 
-    the defined constraints.
+    and removes candidate numbers from unsolved cells using the defined constraints.
 
     Parameters
     ___________________
@@ -174,10 +171,9 @@ def nakedSingles(constraintG):
     nakedSingles
     --------------------
     This function looks for a vertex on the graph, 
-    and if the type of the vertex's valOrCand attribute
-    is type list, and the list is of length 1, then it 
-    sets the valOrCand attribute equal to the sole candidate
-    in that list.
+    and if the type of the vertex's valOrCand attribute 
+    is type list, and the list is of length 1, then it sets 
+    the valOrCand attribute equal to the sole candidate in that list.
 
     Parameters
     _________________
@@ -208,11 +204,9 @@ def nakedPairs(constraintG):
     """
     nakedPairs
     -------------------
-    This function finds a pair of cells
-    in the same unit that share two
-    remaining candidate numbers. It then
-    removes those candidates from other 
-    cells in their shared unit.
+    This function finds a pair of cells in 
+    the same unit that share two remaining candidate 
+    numbers. It then removes those candidates from other cells in their shared unit.
 
     Parameters
     __________________
