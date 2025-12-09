@@ -12,7 +12,7 @@ from pythonds.graphs import Graph, Vertex
 def units(sudoku):
     """
     units
-    ---------
+    ------------
     Defines the rows, columns, and boxes of a sudoku 
     board. Also creates a tuple for each cell on the
     board, based on the row, column, and box each cell 
@@ -21,14 +21,14 @@ def units(sudoku):
     that equal 0.
 
     Parameters
-    ___________
+    _________________
     sudoku : list[int]
         A list of 81 values. This is the list that the program
         will edit to create candidate numbers for unsolved cells
         (cells that have a value of 0).
     
     Returns
-    ________
+    ________________
     rowList : list
         A list of lists of the cells in each row.
     columnList : list
@@ -44,7 +44,7 @@ def units(sudoku):
         units; the row, column, and box it belongs to.
     
     Notes
-    ------
+    ------------
     To be clear: each unit list is not making a list from the values
     of the given sudoku puzzle. It's making a list from the values of
     a sudoku board. The actual sudoku values will be assigned to vertices
@@ -80,7 +80,7 @@ def units(sudoku):
 def buildConstraintGraph(sudoku):
     """
     buildConstraintGraph
-    ------------------------
+    -----------------------------------
     This function builds a graph of the sudoku board, 
     adding information to each cell, telling it what 
     units it belongs to, and if it has a value or some
@@ -88,13 +88,13 @@ def buildConstraintGraph(sudoku):
     each unit, which enforces the rules of sudoku.
 
     Parameters
-    ___________
+    ___________________
     sudoku : list[int]
         A list of 81 values. This list is passed through because candidatedSudoku,
         which is returned from the units function, was built from the sudoku puzzle.
     
     Returns
-    ________
+    __________________
     constraintG : Graph()
         Returns the constraint graph.
     """
@@ -142,20 +142,20 @@ def buildConstraintGraph(sudoku):
 def constraintPropagation(constraintG):
     """
     constraintPropagation
-    ------------------------
+    -----------------------------------
     This function takes the constraint graph, constraintG, 
     and removes candidate numbers from unsolved cells using 
     the defined constraints.
 
     Parameters
-    ___________
+    ___________________
     constraintG : Graph()
         The constraint graph created in the buildConstraintGraph function.
         This could be the initial graph, or it could have previously been
         propagated.
     
     Returns
-    ________
+    __________________
     constraintG : Graph()
         Returns the propagated graph so strategies can operate on it.
     """
@@ -172,7 +172,7 @@ def constraintPropagation(constraintG):
 def nakedSingles(constraintG):
     """
     nakedSingles
-    ----------------
+    --------------------
     This function looks for a vertex on the graph, 
     and if the type of the vertex's valOrCand attribute
     is type list, and the list is of length 1, then it 
@@ -180,7 +180,7 @@ def nakedSingles(constraintG):
     in that list.
 
     Parameters
-    ___________
+    _________________
     constraintG : Graph()
         The constraint graph created in the buildConstraintGraph function.
         This has been propagated through the constraintPropagation function.
@@ -188,7 +188,7 @@ def nakedSingles(constraintG):
         than it initially was.
     
     Returns
-    ________
+    _______________
     constraintG : Graph()
         Returns the edited graph so it can be used by other functions.
     """
@@ -207,11 +207,15 @@ def nakedSingles(constraintG):
 def nakedPairs(constraintG):
     """
     nakedPairs
-    --------------
-    This function finds a pair of cells in the same unit that share two remaining candidate numbers. It then removes those candidates from other cells in their shared unit.
+    -------------------
+    This function finds a pair of cells
+    in the same unit that share two
+    remaining candidate numbers. It then
+    removes those candidates from other 
+    cells in their shared unit.
 
     Parameters
-    ___________
+    __________________
     constraintG : Graph()
         The constraint graph created in the buildConstraintGraph function.
         This has been propagated through the constraintPropagation function.
@@ -219,7 +223,7 @@ def nakedPairs(constraintG):
         than it initially was.
 
     Returns
-    ________
+    _______________
     constraintG : Graph()
         Returns the edited graph so it can be used by other functions.
     """
